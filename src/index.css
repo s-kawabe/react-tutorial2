@@ -24,12 +24,21 @@ ol, ul {
   font-size: 24px;
   font-weight: bold;
   line-height: 34px;
-  height: 34px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  height: 60px;
+  width: 60px;
+  transition: 0.1s linear
+}
+
+.squareX {
+  background: tomato;
+}
+
+.squareO {
+  background: cornflowerblue;
 }
 
 .square:focus {
@@ -41,10 +50,15 @@ ol, ul {
 }
 
 .game {
+  margin-top: 80px;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
 }
 
 .game-info {
   margin-left: 20px;
+}
+
+.game-info ol li {
+  margin-bottom: 5px;
 }

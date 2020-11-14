@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -7,7 +8,7 @@ function Square(props) {
     // コンポーネント押されたら再レンダー → 押されたコンポーネントのstateを変更
     // → 再レンダー後、コンポーネントの状態は変化している
     <button 
-      className="square" 
+      className={classNames("square", "square" + props.value)}
       onClick={props.onClick}
     >
       {props.value}
@@ -69,7 +70,13 @@ class Game extends React.Component {
       return;
     }
 
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    if(this.state.xIsNext) {
+      squares[i] = 'X';
+
+    } else {
+      squares[i] = 'O';
+    }
+
     this.setState({
       history: history.concat([{
         squares: squares,
@@ -93,8 +100,11 @@ class Game extends React.Component {
 
     // map([callback(value,index)]) step: value, move: index
     const moves = history.map((step,move) => {
+      
+      // :TODO1 log disp row and col
+
       const desc = move ?
-        'Go to move #' + move :
+        'Go to move #row:' + move + 'col:' :
         'Go to game start';
       return (
         <li key={move}>
