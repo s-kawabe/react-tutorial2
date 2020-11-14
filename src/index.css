@@ -62,3 +62,8 @@ ol, ul {
 .game-info ol li {
   margin-bottom: 5px;
 }
+
+.win-line {
+  border: 2px solid darkorchid;
+  color: white;
+}

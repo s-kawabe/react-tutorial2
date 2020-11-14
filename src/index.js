@@ -4,24 +4,44 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
-  return (
-    // コンポーネント押されたら再レンダー → 押されたコンポーネントのstateを変更
-    // → 再レンダー後、コンポーネントの状態は変化している
-    <button 
-      className={classNames("square", "square" + props.value)}
-      onClick={props.onClick}
-    >
-      {props.value}
-    </button>
-  );
+  
+  let square;
+  if(props.winLine && props.winLine.includes(props.num)) {
+    square = <button 
+    className={classNames("square", "square" + props.value, "win-line")}
+    onClick={props.onClick}
+  >
+    {props.value}
+  </button>
+  } else {
+    square = <button 
+    className={classNames("square", "square" + props.value)}
+    onClick={props.onClick}
+  >
+    {props.value}
+  </button>
+  }
+
+  return square;
 }
 
 class Board extends React.Component {
   renderSquare(i) {
-    return (<Square 
-              value={this.props.squares[i]}
-              onClick={() => this.props.onClick(i)}
-            />);
+    let result;
+    if(this.props.winLine) {
+      result = (<Square 
+        value={this.props.squares[i]}
+        num={i}
+        onClick={() => this.props.onClick(i)}
+        winLine={this.props.winLine}
+      />);
+    } else {
+      result = (<Square 
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
+      />);
+    }
+    return result;
   }
 
   render() {
@@ -127,18 +147,34 @@ class Game extends React.Component {
 
     let status;
     if(winner) {
-      status = 'Winner:' + winner
+      if(winner === 'draw') {
+        status = 'DRAW...';
+      } else {
+        status = 'Winner:' + winner[0]
+      }
+      
     } else {
       status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
     } 
 
+    let board = null;
+    if(winner) {
+      board = <Board 
+      squares={current.squares}
+      onClick={(i) => this.handleClick(i)}
+      winLine={winner[1]}
+      />
+    } else {
+      board = <Board 
+      squares={current.squares}
+      onClick={(i) => this.handleClick(i)}
+      />
+    }
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board 
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
+          {board}
         </div>
         <div className="game-info">
           <div>{status}</div>
@@ -172,8 +208,13 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [squares[a], lines[i]];
     }
   }
+
+  if(squares.every((elem) => { return elem !== null; })) {
+    return 'draw';
+  }
+
   return null;
 }
