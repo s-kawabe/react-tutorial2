@@ -25,24 +25,21 @@ class Board extends React.Component {
   }
 
   render() {
+    // :TODO3 fix hard cording    
+    let cnt = 0;
+    let result = [];
+
+    for(let row = 0; row < 3; row++) {
+      let elem = [];
+      for(let col = 0; col < 3; col++) {
+        elem.push(this.renderSquare(cnt));
+        cnt++;
+      }
+      result.push(<div className="board-row">{elem}</div>)
+    }
+
     return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
+      <div>{result}</div>
     );
   }
 }
@@ -57,6 +54,7 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      isListAsc: true
     }
   }
 
@@ -94,6 +92,12 @@ class Game extends React.Component {
     });
   }
 
+  switchList() {
+    this.setState({
+      isListAsc: !this.state.isListAsc 
+    })
+  }
+
   render() {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[this.state.stepNumber];
@@ -107,14 +111,18 @@ class Game extends React.Component {
       let col = step.selected % 3 + 1; 
       
       // ★firstMessage disp when move == 0 
-      const desc = move ?
-        `Go to move(${row},${col})` :
+      let desc = move ?
+        `Go to move ${move}(${row},${col})` :
         'Go to game start'; //★
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      )
+      
+      // :TODO2 current log to bold
+      if (step === current) { 
+        desc = <strong>{desc}</strong>;
+      }
+
+      return (<li key={move}>
+        <button onClick={() => this.jumpTo(move)}>{desc}</button>
+      </li>);
     })
 
     let status;
@@ -122,7 +130,7 @@ class Game extends React.Component {
       status = 'Winner:' + winner
     } else {
       status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
-    }
+    } 
 
     return (
       <div className="game">
@@ -134,7 +142,9 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          {/* TODO4 list togge button */}
+          <button onClick={() => this.switchList()}>toggle</button>
+          {this.state.isListAsc ? <ol>{moves}</ol> : <ol>{moves.reverse()}</ol>}
         </div>
       </div>
     );
