@@ -53,6 +53,7 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        selected: null
       }],
       stepNumber: 0,
       xIsNext: true,
@@ -72,7 +73,6 @@ class Game extends React.Component {
 
     if(this.state.xIsNext) {
       squares[i] = 'X';
-
     } else {
       squares[i] = 'O';
     }
@@ -80,6 +80,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        selected: i
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -102,10 +103,13 @@ class Game extends React.Component {
     const moves = history.map((step,move) => {
       
       // :TODO1 log disp row and col
-
+      let row = Math.floor(step.selected/3) + 1;
+      let col = step.selected % 3 + 1; 
+      
+      // ★firstMessage disp when move == 0 
       const desc = move ?
-        'Go to move #row:' + move + 'col:' :
-        'Go to game start';
+        `Go to move(${row},${col})` :
+        'Go to game start'; //★
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
